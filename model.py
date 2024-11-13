@@ -38,3 +38,13 @@ class ResNet50(nn.Module):
 
     def forward(self, x):
         return(self.model_resnet(x))
+
+class ViT_b_16(nn.Module):
+    def __init__(self):
+        super(ViT_b_16, self).__init__()
+        self.model_vit = models.vit_b_16(models.ViT_B_16_Weights.DEFAULT)
+        print(self.model_vit.heads[0])
+        self.model_vit.heads[0] = nn.Linear(self.model_vit.heads[0].in_features, 500)
+        
+    def forward(self, x):
+        return(self.model_vit(x))
