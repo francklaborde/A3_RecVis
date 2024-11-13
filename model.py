@@ -25,6 +25,11 @@ class VGG16(nn.Module):
     def __init__(self):
         super(VGG16, self).__init__()
         self.model_vgg = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
-    
+        self.model_vgg.classifier[6] = nn.Linear(self.model_vgg.classifier[6].in_features, 500)
+
     def forward(self, x):
         return(self.model_vgg(x))
+    
+# class ResNet50(nn.Module):
+#     def __init__(self):
+#         super(ResNet50, self).__init__()

@@ -1,5 +1,6 @@
 import argparse
 import os
+import matplotlib.pyplot as plt
 
 import torch
 import torch.nn as nn
@@ -43,7 +44,7 @@ def opts() -> argparse.ArgumentParser:
     parser.add_argument(
         "--lr",
         type=float,
-        default=0.1,
+        default=0.01,
         metavar="LR",
         help="learning rate (default: 0.01)",
     )
@@ -82,8 +83,13 @@ def opts() -> argparse.ArgumentParser:
         "--show_structure",
         type=bool,
         default=False,
-        metavar="T/F",
         help="Display the structure of the model selected"
+    )
+    parser.add_argument(
+        "--show_loss",
+        type=bool,
+        default=False,
+        help="Display the training loss and the validation loss on graphs at the end of the training"
     )
     args = parser.parse_args()
     return args
@@ -108,8 +114,6 @@ def train(
         args (argparse.ArgumentParser): Arguments parsed from command line
     """
     model.train()
-    if args.show_structure:
-        print(model)
     correct = 0
     for batch_idx, (data, target) in enumerate(train_loader):
         if use_cuda:
@@ -138,7 +142,8 @@ def train(
             len(train_loader.dataset),
             100.0 * correct / len(train_loader.dataset),
         )
-    )   
+    )
+    return loss.data.item()
 
 
 def validation(
@@ -221,12 +226,16 @@ def main():
 
     # Setup optimizer
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
-
+    if args.show_structure:
+        print(model)
+    if args.show_loss:
+        train_losses = []
+        val_losses = []
     # Loop over the epochs
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        train(model, optimizer, train_loader, use_cuda, epoch, args)
+        train_loss = train(model, optimizer, train_loader, use_cuda, epoch, args)
         # validation loop
         val_loss = validation(model, val_loader, use_cuda)
         if val_loss < best_val_loss:
@@ -237,6 +246,9 @@ def main():
         # also save the model every epoch
         model_file = args.experiment + "/model_" + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
+        if args.show_loss:
+            train_losses.append(train_loss)
+            val_losses.append(val_loss)
         print(
             "Saved model to "
             + model_file
@@ -244,6 +256,13 @@ def main():
             + best_model_file
             + "` to generate the Kaggle formatted csv file\n"
         )
+    if args.show_loss:
+        plt.plot(train_losses, label="Training Loss")
+        plt.plot(val_losses, label="Validation Loss")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.legend()
+        plt.show()
 
 
 if __name__ == "__main__":
