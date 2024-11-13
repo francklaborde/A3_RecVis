@@ -78,6 +78,13 @@ def opts() -> argparse.ArgumentParser:
         metavar="NW",
         help="number of workers for data loading",
     )
+    parser.add_argument(
+        "--show_structure",
+        type=bool,
+        default=False,
+        metavar="T/F",
+        help="Display the structure of the model selected"
+    )
     args = parser.parse_args()
     return args
 
@@ -101,6 +108,8 @@ def train(
         args (argparse.ArgumentParser): Arguments parsed from command line
     """
     model.train()
+    if args.show_structure:
+        print(model)
     correct = 0
     for batch_idx, (data, target) in enumerate(train_loader):
         if use_cuda:
