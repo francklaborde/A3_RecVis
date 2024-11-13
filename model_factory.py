@@ -1,8 +1,8 @@
 """Python file to instantite the model and the transform that goes with it."""
 
-from data import data_transforms, data_transforms_VGG16
+from data import data_transforms, data_transforms_VGG16, data_transforms_ResNet50
 from model import Net
-from model import VGG16
+from model import VGG16, ResNet50
 
 
 class ModelFactory:
@@ -16,6 +16,8 @@ class ModelFactory:
             return Net()
         elif self.model_name == "VGG16":
             return VGG16()
+        elif self.model_name == "ResNet50":
+            return ResNet50()
         else:
             raise NotImplementedError("Model not implemented")
 
@@ -24,6 +26,8 @@ class ModelFactory:
             return data_transforms
         elif self.model_name == "VGG16":
             return data_transforms_VGG16
+        elif self.model_name == "ResNet50":
+            return data_transforms_ResNet50
         else:
             raise NotImplementedError("Transform not implemented")
 

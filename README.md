@@ -6,3 +6,4 @@ To launch a model, supposing you have all the libraries installed :
 ```bash
 python ./main.py --data "path/to/sketch_recvis2024/sketch_recvis2024" --model_name "basic_cnn"
 ```
+

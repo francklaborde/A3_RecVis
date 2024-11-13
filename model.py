@@ -30,6 +30,11 @@ class VGG16(nn.Module):
     def forward(self, x):
         return(self.model_vgg(x))
     
-# class ResNet50(nn.Module):
-#     def __init__(self):
-#         super(ResNet50, self).__init__()
+class ResNet50(nn.Module):
+    def __init__(self):
+        super(ResNet50, self).__init__()
+        self.model_resnet = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+        self.model_resnet.fc = nn.Linear(self.model_resnet.fc.in_features, 500)
+
+    def forward(self, x):
+        return(self.model_resnet(x))

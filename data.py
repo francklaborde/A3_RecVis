@@ -13,3 +13,5 @@ data_transforms = transforms.Compose(
 )
 
 data_transforms_VGG16 = models.VGG16_Weights.DEFAULT.transforms()
+
+data_transforms_ResNet50 = models.ResNet50_Weights.DEFAULT.transforms()
