@@ -2,7 +2,7 @@
 
 from data import data_transforms, data_transforms_VGG16, data_transforms_ResNet50, data_transforms_ViT_b_16, data_transforms_AlexNet
 from model import Net
-from model import VGG16, ResNet50, ViT_b_16, AlexNet
+from model import VGG16, ResNet50, ViT_b_16, AlexNet, ResNet50_frozen
 
 
 class ModelFactory:
@@ -21,7 +21,9 @@ class ModelFactory:
         elif self.model_name == "ViT_b_16":
             return ViT_b_16()  
         elif self.model_name == "AlexNet":
-            return AlexNet()      
+            return AlexNet()
+        elif self.model_name == "ResNet50_frozen":
+            return ResNet50_frozen()
         else:
             raise NotImplementedError("Model not implemented")
 
@@ -36,6 +38,8 @@ class ModelFactory:
             return data_transforms_ViT_b_16
         elif self.model_name == "AlexNet":
             return data_transforms_AlexNet
+        elif self.model_name == "ResNet50_frozen":
+            return data_transforms_ResNet50
         else:
             raise NotImplementedError("Transform not implemented")
 

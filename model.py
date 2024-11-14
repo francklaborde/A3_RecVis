@@ -43,7 +43,6 @@ class ViT_b_16(nn.Module):
     def __init__(self):
         super(ViT_b_16, self).__init__()
         self.model_vit = models.vit_b_16(models.ViT_B_16_Weights.DEFAULT)
-        print(self.model_vit.heads[0])
         self.model_vit.heads[0] = nn.Linear(self.model_vit.heads[0].in_features, 500)
         
     def forward(self, x):
@@ -57,3 +56,15 @@ class AlexNet(nn.Module):
 
     def forward(self, x):
         return(self.model_alexnet(x))
+    
+class ResNet50_frozen(nn.Module):
+    def __init__(self):
+        super(ResNet50, self).__init__()
+        self.model_resnet = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+        self.model_resnet.fc = nn.Linear(self.model_resnet.fc.in_features, 500)
+        for name, param in self.model_resnet.named_parameters():
+            if "layer4" not in name:  # On entraîne uniquement la dernière couche "layer4" et la couche de sortie
+                param.requires_grad = False
+
+    def forward(self, x):
+        return(self.model_resnet(x))
