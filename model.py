@@ -48,3 +48,12 @@ class ViT_b_16(nn.Module):
         
     def forward(self, x):
         return(self.model_vit(x))
+
+class AlexNet(nn.Module):
+    def __init__(self):
+        super(AlexNet, self).__init__()
+        self.model_alexnet = models.alexnet(weights=models.AlexNet_Weights.DEFAULT)
+        self.model_alexnet.classifier[6] = nn.Linear(self.model_alexnet.classifier[6].in_features, 500)
+
+    def forward(self, x):
+        return(self.model_alexnet(x))
