@@ -59,7 +59,7 @@ class AlexNet(nn.Module):
     
 class ResNet50_frozen(nn.Module):
     def __init__(self):
-        super(ResNet50, self).__init__()
+        super(ResNet50_frozen, self).__init__()
         self.model_resnet = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
         self.model_resnet.fc = nn.Linear(self.model_resnet.fc.in_features, 500)
         for name, param in self.model_resnet.named_parameters():
