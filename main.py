@@ -50,10 +50,11 @@ def opts() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--momentum",
-        type=float,
-        default=0.5,
+        type=list,
+        default=[0.5],
+        nargs="+",
         metavar="M",
-        help="SGD momentum (default: 0.5)",
+        help="SGD momentum (default: 0.5)/ Adam (beta1, beta2) (default: (0.9, 0.999))",
     )
     parser.add_argument(
         "--seed", type=int, default=1, metavar="S", help="random seed (default: 1)"
@@ -90,6 +91,12 @@ def opts() -> argparse.ArgumentParser:
         type=bool,
         default=False,
         help="Display the training loss and the validation loss on graphs at the end of the training"
+    )
+    parser.add_argument(
+        "--optimizer",
+        type=str,
+        default="SGD",
+        help="Optimizer to use"
     )
     args = parser.parse_args()
     return args
@@ -186,7 +193,31 @@ def validation(
     )
     return validation_loss
 
+def get_optimizer(optimizer_name: str,
+                  model: nn.Module,
+                  lr: float,
+                  args:argparse.ArgumentParser
+) -> torch.optim.Optimizer:
 
+    momentum = args.momentum
+    if optimizer_name == "SGD":
+        if len(momentum) == 1:
+            print("SGD with momentum: ", momentum[0])
+            return optim.SGD(model.parameters(), lr=lr, momentum=momentum[0])
+        else:
+            raise ValueError("SGD needs only one momentum value")
+    elif optimizer_name == "Adam":
+        if len(momentum) == 1:
+            #Value by default for the momentum
+            print("Adam with default momentum: ", (0.9, 0.999))
+            return optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999))
+        elif len(momentum) == 2 or len(momentum) == 1:
+            print("Adam with momentum: ", (momentum[0], momentum[1]))
+            return optim.Adam(model.parameters(), lr=lr, betas=(momentum[0], momentum[1]))
+        else:
+            raise ValueError("Adam needs two momentum values")   
+
+ 
 def main():
     """Default Main Function."""
     # options
@@ -225,7 +256,7 @@ def main():
     )
 
     # Setup optimizer
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    optimizer = get_optimizer(args.optimizer, model, args.lr, args)
     if args.show_structure:
         print(model)
     if args.show_loss:
@@ -257,6 +288,9 @@ def main():
             + "` to generate the Kaggle formatted csv file\n"
         )
     if args.show_loss:
+        print("Training and validation loss graphs")
+        print(train_losses)
+        print(val_losses)
         plt.plot(train_losses, label="Training Loss")
         plt.plot(val_losses, label="Validation Loss")
         plt.xlabel("Epoch")
