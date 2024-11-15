@@ -203,7 +203,7 @@ def get_optimizer(optimizer_name: str,
     if optimizer_name == "SGD":
         if len(momentum) == 1:
             print("SGD with momentum: ", momentum[0])
-            return optim.SGD(model.parameters(), lr=lr, momentum=momentum[0])
+            return optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=lr, momentum=momentum[0])
         else:
             raise ValueError("SGD needs only one momentum value")
     elif optimizer_name == "Adam":

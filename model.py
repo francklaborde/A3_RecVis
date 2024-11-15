@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
+from transformers import ViTForImageClassification
 nclasses = 500
 
 
@@ -68,3 +69,11 @@ class ResNet50_frozen(nn.Module):
 
     def forward(self, x):
         return(self.model_resnet(x))
+    
+class ViTForImageClassification_():
+    def __init__(self):
+        self.model_vit = ViTForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
+        self.model_vit.classifier = nn.Linear(self.model_vit.classifier.in_features, 500)
+        
+    def forward(self, x):
+        return(self.model_vit(x))

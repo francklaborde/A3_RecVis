@@ -1,8 +1,8 @@
 """Python file to instantite the model and the transform that goes with it."""
 
-from data import data_transforms, data_transforms_VGG16, data_transforms_ResNet50, data_transforms_ViT_b_16, data_transforms_AlexNet
+from data import data_transforms, data_transforms_VGG16, data_transforms_ResNet50, data_transforms_ViT_b_16, data_transforms_AlexNet, data_transforms_ViTForImageClassification
 from model import Net
-from model import VGG16, ResNet50, ViT_b_16, AlexNet, ResNet50_frozen
+from model import VGG16, ResNet50, ViT_b_16, AlexNet, ResNet50_frozen, ViTForImageClassification_
 
 
 class ModelFactory:
@@ -24,6 +24,8 @@ class ModelFactory:
             return AlexNet()
         elif self.model_name == "ResNet50_frozen":
             return ResNet50_frozen()
+        elif self.model_name == "ViTForImageClassification":
+            return ViTForImageClassification_()
         else:
             raise NotImplementedError("Model not implemented")
 
@@ -40,6 +42,8 @@ class ModelFactory:
             return data_transforms_AlexNet
         elif self.model_name == "ResNet50_frozen":
             return data_transforms_ResNet50
+        elif self.model_name == "ViTForImageClassification":
+            return data_transforms_ViTForImageClassification
         else:
             raise NotImplementedError("Transform not implemented")
 

@@ -1,5 +1,6 @@
 import torchvision.transforms as transforms
 import torchvision.models as models
+from transformers import ViTImageProcessor
 
 # once the images are loaded, how do we pre-process them before being passed into the network
 # by default, we resize the images to 64 x 64 in size
@@ -19,3 +20,5 @@ data_transforms_ResNet50 = models.ResNet50_Weights.DEFAULT.transforms()
 data_transforms_ViT_b_16 = models.ViT_B_16_Weights.DEFAULT.transforms()
 
 data_transforms_AlexNet = models.AlexNet_Weights.DEFAULT.transforms()
+
+data_transforms_ViTForImageClassification = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k")
