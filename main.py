@@ -296,8 +296,14 @@ def main():
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.legend()
+        plt.savefig("loss_plot.png")
         plt.show()
 
+from torchvision.models import ResNet50_Weights
 
 if __name__ == "__main__":
+
+    weights = ResNet50_Weights.DEFAULT
+    data_transforms = weights.transforms()
+    print(data_transforms)
     main()
