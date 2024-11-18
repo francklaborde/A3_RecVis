@@ -22,3 +22,5 @@ data_transforms_ViT_b_16 = models.ViT_B_16_Weights.DEFAULT.transforms()
 data_transforms_AlexNet = models.AlexNet_Weights.DEFAULT.transforms()
 
 data_transforms_ViTForImageClassification = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k")
+
+data_transforms_EfficientNet = models.EfficientNet_Weights.DEFAULT.transforms()

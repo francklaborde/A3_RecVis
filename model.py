@@ -77,3 +77,12 @@ class ViTForImageClassification_():
         
     def forward(self, x):
         return(self.model_vit(x))
+
+class EfficientNet(nn.Module):
+    def __init__(self):
+        super(EfficientNet, self).__init__()
+        self.model_efficientnet = models.efficientnet_b5(weights=models.EfficientNet_B5_Weights.DEFAULT)
+        self.model_efficientnet.classifier = nn.Linear(self.model_efficientnet.classifier.in_features, 500)
+
+    def forward(self, x):
+        return(self.model_efficientnet(x))
