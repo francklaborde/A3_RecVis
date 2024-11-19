@@ -140,7 +140,7 @@ def train(
                     batch_idx * len(data),
                     len(train_loader.dataset),
                     100.0 * batch_idx / len(train_loader),
-                    loss.data.item(),
+                    loss.data.item()/len(train_loader.dataset),
                 )
             )
     print(
@@ -150,7 +150,7 @@ def train(
             100.0 * correct / len(train_loader.dataset),
         )
     )
-    return loss.data.item()
+    return loss.data.item()/len(train_loader.dataset)
 
 
 def validation(
@@ -276,7 +276,7 @@ def main():
             best_model_file = args.experiment + "/model_best.pth"
             torch.save(model.state_dict(), best_model_file)
         # also save the model every epoch
-        model_file = args.experiment + "/model_" + str(epoch) + ".pth"
+        model_file = args.experiment + "/model_" + args.model_name + "_" + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
         if args.show_loss:
             train_losses.append(train_loss)
@@ -297,7 +297,7 @@ def main():
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.legend()
-        plt.savefig("loss_plot.png")
+        plt.savefig("loss_plot_" + args.model_name + ".png")
         plt.show()
 
 from torchvision.models import ResNet50_Weights
