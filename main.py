@@ -289,16 +289,32 @@ def main():
             + "` to generate the Kaggle formatted csv file\n"
         )
     if args.show_loss:
-        print("Training and validation loss graphs")
-        print(train_losses)
-        print(val_losses)
-        plt.plot(train_losses, label="Training Loss")
-        plt.plot(val_losses, label="Validation Loss")
-        plt.xlabel("Epoch")
-        plt.ylabel("Loss")
-        plt.legend()
-        plt.savefig("loss_plot_" + args.model_name + ".png")
-        plt.show()
+        # Création de la figure avec deux sous-graphiques
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+        # Sous-graphe 1 : Pertes d'entraînement
+        ax1.plot(train_losses, label="Training Loss", marker='o', linestyle='-', color='blue')
+        ax1.set_xlabel("Epoch")
+        ax1.set_ylabel("Loss")
+        ax1.set_title("Training Loss")
+        ax1.grid(visible=True, linestyle='--', alpha=0.7)
+        ax1.legend()
+
+        # Sous-graphe 2 : Pertes de validation
+        ax2.plot(val_losses, label="Validation Loss", marker='s', linestyle='--', color='orange')
+        ax2.set_xlabel("Epoch")
+        ax2.set_ylabel("Loss")
+        ax2.set_title("Validation Loss")
+        ax2.grid(visible=True, linestyle='--', alpha=0.7)
+        ax2.legend()
+
+        # Ajustement de l'espacement entre les sous-graphiques
+        plt.tight_layout()
+
+        # Sauvegarde de la figure
+        output_filename = f"loss_plots_{args.model_name}.png"
+        plt.savefig(output_filename)
+        print(f"Figure saved as: {output_filename}")
 
 from torchvision.models import ResNet50_Weights
 
