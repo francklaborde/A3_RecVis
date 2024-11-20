@@ -283,6 +283,8 @@ def main():
     # Loop over the epochs
     best_val_loss = 1e8
     if args.wandb:
+        print("Using wandb")
+        wandb.login(key="3e9edf1b203361da860e5ff59b98814e018b113f")
         wandb.init(
         # set the wandb project where this run will be logged
         project="RecVis Kaggle",
