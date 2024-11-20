@@ -1,6 +1,7 @@
 import argparse
 import os
 import matplotlib.pyplot as plt
+import wandb
 
 import torch
 import torch.nn as nn
@@ -104,6 +105,12 @@ def opts() -> argparse.ArgumentParser:
         default=1,
         help="Number of GPUs to use"
     )
+    parser.add_argument(
+        "--wandb",
+        type=bool,
+        default=False,
+        help="Use wandb for displaying results"
+    )
     args = parser.parse_args()
     return args
 
@@ -146,7 +153,7 @@ def train(
                     batch_idx * len(data),
                     len(train_loader.dataset),
                     100.0 * batch_idx / len(train_loader),
-                    loss.data.item()/len(train_loader.dataset),
+                    loss.data.item(),
                 )
             )
     print(
@@ -156,7 +163,7 @@ def train(
             100.0 * correct / len(train_loader.dataset),
         )
     )
-    return loss.data.item()/len(train_loader.dataset)
+    return loss.data.item()
 
 
 def validation(
@@ -275,6 +282,19 @@ def main():
         val_losses = []
     # Loop over the epochs
     best_val_loss = 1e8
+    if args.wandb:
+        wandb.init(
+        # set the wandb project where this run will be logged
+        project="RecVis Kaggle",
+
+        # track hyperparameters and run metadata
+        config={
+        "learning_rate": args.lr,
+        "architecture": args.model_name,
+        "dataset": "ImageNet Sketches",
+        "epochs": args.epochs,
+        }
+        )
     for epoch in range(1, args.epochs + 1):
         # training loop
         train_loss = train(model, optimizer, train_loader, use_cuda, epoch, args)
@@ -288,6 +308,8 @@ def main():
         # also save the model every epoch
         model_file = args.experiment + "/model_" + args.model_name + "_" + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
+        if args.wandb:
+            wandb.log({"train_loss": train_loss, "val_loss": val_loss})
         if args.show_loss:
             train_losses.append(train_loss)
             val_losses.append(val_loss)
@@ -298,6 +320,8 @@ def main():
             + best_model_file
             + "` to generate the Kaggle formatted csv file\n"
         )
+    if args.wandb:
+        wandb.finish()
     if args.show_loss:
         # Création de la figure avec deux sous-graphiques
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
