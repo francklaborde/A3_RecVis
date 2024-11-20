@@ -172,7 +172,7 @@ def validation(
     model: nn.Module,
     val_loader: torch.utils.data.DataLoader,
     use_cuda: bool,
-    args: argparse.ArgumentParser,
+    # args: argparse.ArgumentParser,
 ) -> float:
     """Default Validation Loop.
 
@@ -198,8 +198,8 @@ def validation(
             # get the index of the max log-probability
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-            if args.wandb:
-                wandb.log({"val_loss": criterion(output, target).data.item()})
+            # if args.wandb:
+            #     wandb.log({"val_loss": criterion(output, target).data.item()})
             
     validation_loss /= len(val_loader.dataset)
     print(
