@@ -98,6 +98,12 @@ def opts() -> argparse.ArgumentParser:
         default="SGD",
         help="Optimizer to use"
     )
+    parser.add_argument(
+        "--num_GPUs",
+        type=int,
+        default=1,
+        help="Number of GPUs to use"
+    )
     args = parser.parse_args()
     return args
 
@@ -238,7 +244,10 @@ def main():
     model, data_transforms = ModelFactory(args.model_name).get_all()
     if use_cuda:
         print("Using GPU")
-        model.cuda()
+        if args.num_GPUs > 1:
+            model = nn.DataParallel(model, device_ids=range(args.num_GPUs)).to("cuda")
+        else:
+            model.cuda()
     else:
         print("Using CPU")
 
@@ -249,6 +258,7 @@ def main():
         shuffle=True,
         num_workers=args.num_workers,
     )
+    print(data_transforms)
     val_loader = torch.utils.data.DataLoader(
         datasets.ImageFolder(args.data + "/val_images", transform=data_transforms),
         batch_size=args.batch_size,
