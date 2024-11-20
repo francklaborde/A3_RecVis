@@ -305,7 +305,7 @@ def main():
         # training loop
         train_loss = train(model, optimizer, train_loader, use_cuda, epoch, args)
         # validation loop
-        val_loss = validation(model, val_loader, use_cuda, args)
+        val_loss = validation(model, val_loader, use_cuda)
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
