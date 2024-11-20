@@ -146,8 +146,6 @@ def train(
         optimizer.step()
         pred = output.data.max(1, keepdim=True)[1]
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-        if args.wandb:
-            wandb.log({"train_loss": loss.data.item()})
         if batch_idx % args.log_interval == 0:
             print(
                 "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
@@ -158,6 +156,8 @@ def train(
                     loss.data.item(),
                 )
             )
+            if args.wandb:
+                wandb.log({"train_loss": loss.data.item()})
     print(
         "\nTrain set: Accuracy: {}/{} ({:.0f}%)\n".format(
             correct,
@@ -288,7 +288,6 @@ def main():
     # Loop over the epochs
     best_val_loss = 1e8
     if args.wandb:
-        print("Using wandb")
         wandb.login(key="3e9edf1b203361da860e5ff59b98814e018b113f")
         wandb.init(
         # set the wandb project where this run will be logged
@@ -311,10 +310,16 @@ def main():
             # save the best model for validation
             best_val_loss = val_loss
             best_model_file = args.experiment + "/model_best.pth"
-            torch.save(model.state_dict(), best_model_file)
+            if args.num_GPUs > 1:
+                torch.save(model.module.state_dict(), best_model_file)
+            else:
+                torch.save(model.state_dict(), best_model_file)
         # also save the model every epoch
         model_file = args.experiment + "/model_" + args.model_name + "_" + str(epoch) + ".pth"
-        torch.save(model.state_dict(), model_file)
+        if args.num_GPUs > 1:
+            torch.save(model.module.state_dict(), model_file)
+        else:
+            torch.save(model.state_dict(), model_file)
         if args.show_loss:
             train_losses.append(train_loss)
             val_losses.append(val_loss)
