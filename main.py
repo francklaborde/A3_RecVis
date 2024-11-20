@@ -146,6 +146,8 @@ def train(
         optimizer.step()
         pred = output.data.max(1, keepdim=True)[1]
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+        if args.wandb:
+            wandb.log({"train_loss": loss.data.item()})
         if batch_idx % args.log_interval == 0:
             print(
                 "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
@@ -170,6 +172,7 @@ def validation(
     model: nn.Module,
     val_loader: torch.utils.data.DataLoader,
     use_cuda: bool,
+    args: argparse.ArgumentParser,
 ) -> float:
     """Default Validation Loop.
 
@@ -195,7 +198,9 @@ def validation(
             # get the index of the max log-probability
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-
+            if args.wandb:
+                wandb.log({"val_loss": criterion(output, target).data.item()})
+            
     validation_loss /= len(val_loader.dataset)
     print(
         "\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)".format(
@@ -301,7 +306,7 @@ def main():
         # training loop
         train_loss = train(model, optimizer, train_loader, use_cuda, epoch, args)
         # validation loop
-        val_loss = validation(model, val_loader, use_cuda)
+        val_loss = validation(model, val_loader, use_cuda, args)
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
@@ -310,8 +315,6 @@ def main():
         # also save the model every epoch
         model_file = args.experiment + "/model_" + args.model_name + "_" + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
-        if args.wandb:
-            wandb.log({"train_loss": train_loss, "val_loss": val_loss})
         if args.show_loss:
             train_losses.append(train_loss)
             val_losses.append(val_loss)
