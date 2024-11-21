@@ -73,8 +73,13 @@ class ResNet50_frozen(nn.Module):
 class Dino(nn.Module):
     def __init__(self):
         super(Dino, self).__init__()
-        self.model_dino = hub.load("facebookresearch/dino:main", "dino_vitb8")
+        self.model_dino = hub.load("facebookresearch/dino:main", "dino_vits8")
         self.model_dino.head = nn.Linear(768, 500)
+        for param in self.model_dino.patch_embed.parameters():
+            param.requires_grad = False
+        for block in self.model_dino.blocks[:-4]:  # Freeze all but the last 4 blocks
+            for param in block.parameters():
+                param.requires_grad = False
 
     def forward(self, x):
         return(self.model_dino(x))
