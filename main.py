@@ -111,6 +111,8 @@ def opts() -> argparse.ArgumentParser:
         help="Use wandb for displaying results"
     )
     args = parser.parse_args()
+    if args.wandb:
+        import wandb
     return args
 
 
@@ -240,8 +242,6 @@ def main():
     """Default Main Function."""
     # options
     args = opts()
-    if args.wandb:
-        import wandb
     # Check if cuda is available
     use_cuda = torch.cuda.is_available()
 
