@@ -6,7 +6,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets
-
+try :
+    import wandb
+except ImportError:
+    pass
 from model_factory import ModelFactory
 
 
@@ -111,8 +114,6 @@ def opts() -> argparse.ArgumentParser:
         help="Use wandb for displaying results"
     )
     args = parser.parse_args()
-    if args.wandb:
-        import wandb
     return args
 
 
