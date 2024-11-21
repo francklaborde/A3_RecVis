@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import hub
 import torchvision.models as models
-from transformers import ViTForImageClassification
 nclasses = 500
 
 
@@ -70,13 +70,14 @@ class ResNet50_frozen(nn.Module):
     def forward(self, x):
         return(self.model_resnet(x))
     
-class ViTForImageClassification_():
+class Dino(nn.Module):
     def __init__(self):
-        self.model_vit = ViTForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k")
-        self.model_vit.classifier = nn.Linear(self.model_vit.classifier.in_features, 500)
-        
+        super(Dino, self).__init__()
+        self.model_dino = hub.load("facebookresearch/dino:main", "dino_vitb8")
+        self.model_dino.head = nn.Linear(768, 500)
+
     def forward(self, x):
-        return(self.model_vit(x))
+        return(self.model_dino(x))
 
 class EfficientNet(nn.Module):
     def __init__(self):

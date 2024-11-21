@@ -1,7 +1,6 @@
 import argparse
 import os
 import matplotlib.pyplot as plt
-import wandb
 
 import torch
 import torch.nn as nn
@@ -241,7 +240,8 @@ def main():
     """Default Main Function."""
     # options
     args = opts()
-
+    if args.wandb:
+        import wandb
     # Check if cuda is available
     use_cuda = torch.cuda.is_available()
 
