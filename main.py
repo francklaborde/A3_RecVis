@@ -113,6 +113,12 @@ def opts() -> argparse.ArgumentParser:
         default=False,
         help="Use wandb for displaying results"
     )
+    parser.add_argument(
+        "--use_scheduler",
+        type=bool,
+        default=False,
+        help="Use a scheduler for the learning rate (CosineAnnealingLR)"
+    )
     args = parser.parse_args()
     return args
 
@@ -281,6 +287,8 @@ def main():
 
     # Setup optimizer
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    if args.use_scheduler:
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6 )
     if args.show_structure:
         print(model)
     if args.show_loss:
@@ -331,6 +339,8 @@ def main():
             + best_model_file
             + "` to generate the Kaggle formatted csv file\n"
         )
+        if args.use_scheduler:
+            scheduler.step()
     if args.wandb:
         wandb.finish()
     if args.show_loss:
