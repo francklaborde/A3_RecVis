@@ -1,8 +1,8 @@
 """Python file to instantite the model and the transform that goes with it."""
 
-from data import data_transforms, data_transforms_VGG16, data_transforms_ResNet50, data_transforms_ViT_b_16, data_transforms_AlexNet, data_transforms_Dino, data_transforms_EfficientNet_default, data_transforms_EfficientNet_noise, data_transforms_EfficientNet_rotation
+from data import data_transforms, data_transforms_VGG16, data_transforms_ResNet50, data_transforms_ViT_b_16, data_transforms_AlexNet, data_transforms_EfficientNet_default, data_transforms_EfficientNet_noise, data_transforms_EfficientNet_rotation
 from model import Net
-from model import VGG16, ResNet50, ViT_b_16, AlexNet, ResNet50_frozen, Dino, EfficientNet
+from model import VGG16, ResNet50, ViT_b_16, AlexNet, ResNet50_frozen, EfficientNet
 
 
 class ModelFactory:
@@ -24,8 +24,6 @@ class ModelFactory:
             return AlexNet()
         elif self.model_name == "ResNet50_frozen":
             return ResNet50_frozen()
-        elif self.model_name == "Dino":
-            return Dino()
         elif "EfficientNet" in self.model_name :
             return EfficientNet()
         else:
@@ -44,8 +42,6 @@ class ModelFactory:
             return data_transforms_AlexNet
         elif self.model_name == "ResNet50_frozen":
             return data_transforms_ResNet50
-        elif self.model_name == "Dino":
-            return data_transforms_Dino
         elif self.model_name == "EfficientNet":
             return data_transforms_EfficientNet_default
         elif self.model_name == "EfficientNet_rotation":

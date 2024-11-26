@@ -32,14 +32,6 @@ data_transforms_ViT_b_16 = models.ViT_B_16_Weights.DEFAULT.transforms()
 
 data_transforms_AlexNet = models.AlexNet_Weights.DEFAULT.transforms()
 
-data_transforms_Dino = transforms.Compose(
-    [
-        transforms.Resize((384, 384)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ]
-)
-
 data_transforms_EfficientNet_default = models.EfficientNet_B4_Weights.DEFAULT.transforms()
 data_transforms_EfficientNet_rotation = transforms.Compose(
     [
